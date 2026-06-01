@@ -9,7 +9,7 @@ export default function decorate(block) {
     const title = (c[2]?.textContent || '').trim();
     const mppa = (c[3]?.textContent || '').trim();
     const body = c[4] ? c[4].innerHTML : '';
-    const pics = [...(c[5]?.querySelectorAll('picture, img') || [])];
+    const pcell = c[5]; let pics = pcell ? [...pcell.querySelectorAll('picture')] : []; if (pcell && !pics.length) pics = [...pcell.querySelectorAll('img')];
     const meta = `<span class="marker">${id}</span><div class="yr">${yr}</div><h2 style="margin-top:6px">${title}</h2>${mppa ? `<span class="mppa">${mppa}</span>` : ''}`;
     const text = `<div class="prose" style="margin-top:18px">${body}</div>`;
     const fig = (p) => { const img = p.tagName === 'IMG' ? p : p.querySelector('img'); const cap = img?.getAttribute('alt') || ''; return `<figure class="figure"><div class="figure-frame"><span class="figure-cap">${cap}</span>${p.outerHTML}</div></figure>`; };
