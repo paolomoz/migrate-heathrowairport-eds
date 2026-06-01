@@ -87,3 +87,50 @@ prototype section HTML verbatim into DA cells. It has to (a) define a block per 
 (b) emit clean authorable cells, (c) rebuild DOM in block JS. The `aem-import` "generic
 blocks + theme CSS" model is right about this; the lesson is that *any* approach needs
 real decorate()-rebuilds, and the fill pipeline emits content, not markup.
+
+**Validation 2 (home, corrected arch):** all blocks render at `/` — hero+video, download,
+5 benefits + 5 yellow icons, 14 contents cards, 3 news cards, band, chrome, #F4F4F6, 0
+broken images, 0 console errors. Faithful match to the prototype.
+
+Blocks built (each rebuilds DOM from positional cells; CSS reused from global styles.css):
+hero, breadcrumb, text, split, groups, callout, infobox, figure, gallery, stats, timeline,
+checklist, cards, benefit, newscard, download, band, pager, legend, phases (+ cmp kept for
+any pass-through). SVGs (zoom-badge, benefit icons) injected in JS, never in DA cells.
+
+### Phase 3 — fill pipeline (DONE)
+- `tools/eds-fill.mjs` reads content/section*.json and emits clean block tables per page,
+  mirroring build-section.mjs landing/detail order. All 14 sections share one schema
+  (incl. §3 which used a bespoke generator). 61 section pages + home = 62.
+- `tools/eds-home.mjs` (bespoke home), `tools/eds-deploy.mjs` (1 page), `tools/eds-batch.mjs`
+  (all pages PUT+preview+publish). Images → `/img/figures/<id>.png`, host-qualified.
+
+### Phase 4 — batch deploy (DONE)
+- 62/62 pages PUT + previewed OK. Then published to .aem.live.
+
+### Phase 5 — verify (DONE)
+- Full sweep of all 62 live pages: **0 issues** (HTTP 200, no overflow, no broken images,
+  all blocks decorated, hero present, no console errors).
+- **ISSUE C (fixed):** `querySelectorAll('picture, img')` in `phases.js` matched both the
+  EDS-generated `<picture>` AND its nested `<img>`, so single-map phases rendered blank /
+  duplicated. Fix: select `picture` first, fall back to `img`. → skill note: when reading
+  authored images in block JS, EDS wraps `<img>` in `<picture>`; always select one, never
+  the `picture, img` union for multi-image cells.
+- Faithful-to-prototype note: construction-programme intro shows a phase map as its primary
+  figure because `primaryFig` matches phase-maps (role≠context) — same as the prototype.
+
+## Skill-improvement summary (for review)
+1. **Don't pass prototype HTML through DA cells** — EDS strips wrapper divs + classes.
+   Importer must emit clean cells + rebuild DOM in block JS. (ISSUE B — the big one.)
+2. **Every block needs a `.css` file** even if empty; a 404 block CSS fails `loadBlock`.
+   (ISSUE A)
+3. **EDS wraps authored `<img>` in `<picture>`** — block JS must select `picture` (or img),
+   never the `picture, img` union when collecting multiple. (ISSUE C)
+4. **`index.html` serves at `/`, not `/index`** — verify against the root.
+5. **`.env` / DA token must be gitignored** — GitHub push-protection blocks the token
+   otherwise (cost a push + amend). Importer should gitignore `.env` at bootstrap.
+6. **Reuse the prototype's global CSS verbatim** by mapping `section{}` → a `.cmp` band the
+   blocks emit; only the section-band selectors needed rewriting. Big time-saver, high
+   fidelity — worth formalising in the skill.
+7. **Bespoke-block + content-model fill pipeline** (vs generic-blocks) gave ~pixel-faithful
+   reproduction of a bespoke design while staying authorable. Good fit when the design is
+   the deliverable.
