@@ -154,11 +154,41 @@ async function loadEager(doc) {
  * Loads everything that doesn't need to be delayed.
  * @param {Element} doc The container element
  */
+/* Figure zoom lightbox — site-wide, event-delegated so it covers figures in any
+   block loaded at any time. Ported from the stardust prototype chrome. */
+function setupLightbox() {
+  if (document.getElementById('lightbox')) return;
+  const lb = document.createElement('div');
+  lb.className = 'lightbox';
+  lb.id = 'lightbox';
+  lb.setAttribute('role', 'dialog');
+  lb.setAttribute('aria-modal', 'true');
+  lb.innerHTML = '<button class="lb-close" aria-label="Close">&times;</button><img alt=""><div class="lb-cap"></div>';
+  document.body.append(lb);
+  const im = lb.querySelector('img');
+  const cap = lb.querySelector('.lb-cap');
+  const close = () => { lb.classList.remove('open'); document.body.style.overflow = ''; };
+  document.addEventListener('click', (e) => {
+    const fr = e.target.closest('.figure-frame');
+    if (fr) {
+      const i = fr.querySelector('img');
+      if (!i) return;
+      im.src = i.currentSrc || i.src;
+      cap.textContent = i.getAttribute('alt') || '';
+      lb.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+  });
+  lb.addEventListener('click', close);
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
+}
+
 async function loadLazy(doc) {
   loadHeader(doc.querySelector('header'));
 
   const main = doc.querySelector('main');
   await loadSections(main);
+  setupLightbox();
 
   const { hash } = window.location;
   const element = hash ? doc.getElementById(hash.substring(1)) : false;
