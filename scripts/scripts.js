@@ -183,12 +183,25 @@ function setupLightbox() {
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
 }
 
+const ZOOM = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3" stroke-linecap="round"/><path d="M11 8v6M8 11h6" stroke-linecap="round"/></svg>';
+function injectZoomBadges() {
+  document.querySelectorAll('.figure-frame:not([data-zoom])').forEach((fr) => {
+    fr.dataset.zoom = '1';
+    const b = document.createElement('span');
+    b.className = 'zoom-badge';
+    b.setAttribute('aria-hidden', 'true');
+    b.innerHTML = ZOOM;
+    fr.append(b);
+  });
+}
+
 async function loadLazy(doc) {
   loadHeader(doc.querySelector('header'));
 
   const main = doc.querySelector('main');
   await loadSections(main);
   setupLightbox();
+  injectZoomBadges();
 
   const { hash } = window.location;
   const element = hash ? doc.getElementById(hash.substring(1)) : false;

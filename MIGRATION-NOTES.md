@@ -62,3 +62,28 @@ content with `[data-icon]` markers instead of pipeline-extracted.
 block JS from the start (markers in content), not bake them into prototype HTML.
 
 ### Phase 2 — blocks + home (IN PROGRESS)
+
+**Validation 1 (home deploy):** PUT 201, preview 200. Chrome + styles + `#F4F4F6` + hero
+video all rendered correctly at `/` (note: EDS serves `index.html` at `/`, not `/index`).
+
+**ISSUE A (fixed):** `cmp` block failed to load — missing `blocks/cmp/cmp.css` (this
+boilerplate's `loadBlock` treats a 404 block CSS as fatal). Fix: every block needs a
+`.css` file even if empty. → skill note: scaffolder must emit an (at least empty) `.css`
+per block.
+
+**ISSUE B (ARCHITECTURE PIVOT — key finding):** the EDS render pipeline **strips wrapper
+`<div>`s and all `class` attributes from block-cell content**, normalising it to clean
+semantic elements (h2/h3/p/ul/li/a/img/strong/em). Confirmed via `/index.plain.html`:
+authored `<div class="download"><div class="wrap">…<p class="eyebrow">` came back as bare
+`<p>…</p><h2>…</h2>`. So the "pass-through cmp block hosting pre-rendered component HTML"
+approach is impossible — EDS destroys the structure before block JS sees it. The hero
+block works *because it rebuilds the DOM in JS from cell text*.
+**FIX / correct architecture:** real per-component blocks whose `decorate()` reads the
+cleaned semantic cell content and rebuilds the component DOM (adding the wrapper classes
+the global CSS targets). The fill pipeline emits CLEAN tables (semantic content only),
+not rich HTML-with-classes.
+**Skill-improvement candidate (important):** a stardust→EDS importer must NOT try to carry
+prototype section HTML verbatim into DA cells. It has to (a) define a block per component,
+(b) emit clean authorable cells, (c) rebuild DOM in block JS. The `aem-import` "generic
+blocks + theme CSS" model is right about this; the lesson is that *any* approach needs
+real decorate()-rebuilds, and the fill pipeline emits content, not markup.
