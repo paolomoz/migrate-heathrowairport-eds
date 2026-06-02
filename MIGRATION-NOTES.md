@@ -178,6 +178,17 @@ that over-split / re-wrap content instead of preserving authored semantic HTML**
   tall map fits its frame on the mist background without cropping. (The 2-col grid itself was
   fine at desktop — the imbalance read as "stacked".)
 
+- **ISSUE J — picture-backed heroes rendered solid purple (boilerplate leak, again).**
+  After the content re-deploy, every hero with a background image showed only the
+  `.cmp--hero` purple. Two causes, both boilerplate-leak: (1) reusing the EDS `<picture>`
+  node as `.hero-media` sized the wrapper but not its inner `<img>` (added
+  `.hero picture.hero-media img{width/height:100%;object-fit:cover}`); (2) the leftover
+  `blocks/hero/hero.css` still carried `.hero picture{z-index:-1}`, which pushed the picture
+  *behind* the hero's purple background. I'd cleaned header/footer block CSS but missed
+  hero's. **FIX:** neutralise `hero.css` too. **Skill rule (reinforces D/#8):** sweep *every*
+  rebuilt block's boilerplate `.css`, not just the obvious chrome ones — any `.hero/.cards/…`
+  selector left behind can silently out-rank or invert the ported design (`z-index:-1` here).
+
 ## Skill-improvement summary (for review)
 1. **Don't pass prototype HTML through DA cells** — EDS strips wrapper divs + classes.
    Importer must emit clean cells + rebuild DOM in block JS. (ISSUE B — the big one.)
