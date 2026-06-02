@@ -161,7 +161,7 @@ p{margin:0 0 1.1em}
 @media(min-width:760px){.aside-grid.two{grid-template-columns:1fr 1fr}}
 
 /* ---------- Nav-card grid ---------- */
-.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:24px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:24px}
 .cards.three{grid-template-columns:repeat(3,1fr)}
 @media(max-width:900px){.cards.three{grid-template-columns:1fr}}
 .card{background:#fff;border:1px solid var(--border);text-decoration:none;color:var(--text);display:flex;flex-direction:column}
