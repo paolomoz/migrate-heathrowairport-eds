@@ -1,33 +1,64 @@
-/* hero — eyebrow / h1 / lede over a background medium.
-   Authoring rows (positional): 1 eyebrow · 2 h1 · 3 lede · 4 media.
-   Media cell: an <a href="*.mp4" data-poster="…"> → looping background video;
-   an <img> → background image; empty → solid purple hero. Built in JS so DA never
-   has to carry a raw <video>/<img class="hero-media">. */
+/* hero — a heading band over a background medium.
+   Authoring (natural, "copy-paste from HTML"): one cell of rich text (an eyebrow
+   paragraph, an <h1>, and a lede paragraph) plus one cell holding the background
+   medium — an <img>/<picture>, or an <a href="*.mp4" data-poster="…"> for a looping
+   video. Order-independent: the media cell is whichever cell carries a picture/img/mp4
+   link and no heading; every other cell is treated as text.
 
+   The block PRESERVES the authored semantic elements (h1/p/strong) rather than
+   rebuilding them from bare strings — so it renders correctly whether the cell was
+   produced by the fill pipeline or hand-authored in DA, and never double-wraps a
+   <p> inside another <p>. */
 export default function decorate(block) {
-  const rows = [...block.querySelectorAll(':scope > div')];
-  const html = (r) => (rows[r]?.querySelector('div')?.innerHTML || '').trim();
-  const cell = (r) => rows[r]?.querySelector('div');
-  const eyebrow = html(0);
-  const h1 = html(1);
-  const lede = html(2);
-  const media = cell(3);
-  let mediaHTML = '';
-  let solid = false;
-  if (media) {
-    const vid = media.querySelector('a[href$=".mp4"]');
-    const img = media.querySelector('img');
+  const cells = [...block.querySelectorAll(':scope > div > div')];
+
+  // classify cells: the media cell holds a picture/img/mp4 link and no heading
+  let mediaCell = null;
+  const textCells = [];
+  cells.forEach((c) => {
+    const hasHeading = c.querySelector('h1, h2, h3');
+    const isMedia = !hasHeading && (c.querySelector('a[href$=".mp4"]') || c.querySelector('picture, img'));
+    if (isMedia && !mediaCell) mediaCell = c;
+    else textCells.push(c);
+  });
+
+  // build / reuse the background medium
+  let mediaEl = null;
+  if (mediaCell) {
+    const vid = mediaCell.querySelector('a[href$=".mp4"]');
     if (vid) {
-      const poster = vid.getAttribute('data-poster') || '';
-      mediaHTML = `<video class="hero-media" autoplay muted loop playsinline${poster ? ` poster="${poster}"` : ''}><source src="${vid.getAttribute('href')}" type="video/mp4"></video>`;
-    } else if (img) {
-      mediaHTML = `<img class="hero-media" src="${img.getAttribute('src')}" alt="${img.getAttribute('alt') || ''}">`;
+      const video = document.createElement('video');
+      video.className = 'hero-media';
+      video.autoplay = true; video.muted = true; video.loop = true; video.playsInline = true;
+      const poster = vid.getAttribute('data-poster');
+      if (poster) video.poster = poster;
+      const src = document.createElement('source');
+      src.src = vid.getAttribute('href'); src.type = 'video/mp4';
+      video.append(src);
+      mediaEl = video;
     } else {
-      solid = true;
+      // reuse the EDS-optimized <picture> (or <img>) node so its srcset survives
+      mediaEl = mediaCell.querySelector('picture') || mediaCell.querySelector('img');
+      if (mediaEl) mediaEl.classList.add('hero-media');
     }
-  } else {
-    solid = true;
   }
+
+  // collect text, preserving authored elements
+  const wrap = document.createElement('div');
+  wrap.className = 'wrap';
+  textCells.forEach((c) => { while (c.firstChild) wrap.append(c.firstChild); });
+
+  // tag the eyebrow: the first <p> that sits before the <h1>
+  const kids = [...wrap.children];
+  const h1i = kids.findIndex((e) => e.tagName === 'H1');
+  const eyebrow = kids.find((e, i) => e.tagName === 'P' && (h1i < 0 || i < h1i));
+  if (eyebrow) eyebrow.classList.add('eyebrow');
+
+  const hero = document.createElement('div');
+  hero.className = `hero${mediaEl ? '' : ' hero--solid'}`;
+  if (mediaEl) hero.append(mediaEl);
+  hero.append(wrap);
+
   block.className = 'cmp cmp--hero';
-  block.innerHTML = `<div class="hero${solid ? ' hero--solid' : ''}">${mediaHTML}<div class="wrap">${eyebrow ? `<p class="eyebrow">${eyebrow}</p>` : ''}<h1>${h1}</h1>${lede ? `<p>${lede}</p>` : ''}</div></div>`;
+  block.replaceChildren(hero);
 }
