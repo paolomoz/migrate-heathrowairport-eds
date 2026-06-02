@@ -90,7 +90,7 @@ p{margin:0 0 1.1em}
 .hero::after{content:"";position:absolute;inset:0;background:linear-gradient(to top,rgba(18,4,34,.78),rgba(18,4,34,.25) 55%,rgba(18,4,34,.15))}
 /* left-pinned narrow text column aligned with the header logo (matches heathrow.com,
    whose banner content is left-offset, not centred in a max-width container) */
-.hero .wrap{position:relative;z-index:2;max-width:1440px;padding:40px 40px}
+.hero .wrap{position:relative;z-index:2;width:100%;max-width:1440px;padding:40px 40px}
 .hero .eyebrow{color:#fff;opacity:.9}
 .hero h1{color:#fff;max-width:18ch}
 .hero p{max-width:54ch;font-size:1.2rem;opacity:.95;margin-bottom:0}
