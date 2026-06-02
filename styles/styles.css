@@ -11,8 +11,10 @@
 :root{
   --primary:#462170; --primary-deep:#2B0B50; --accent:#FFD000; --accent-orange:#F76B1C;
   --text:#2C292A; --muted:#5E6A75; --border:#DADEE1; --mid:#BEC5CB; --mist:#F4F4F6; --white:#fff;
-  --sans:"FrutigerNextPaneuropeanRegular","Open Sans",Arial,sans-serif;
-  --sans-med:"FrutigerNextPaneuropeanMedium","Open Sans",Arial,sans-serif;
+  /* original brand font is licensed Frutiger Next (Monotype); "Hanken Grotesk" is a
+     free, web-licensed humanist substitute closer to Frutiger than the Open Sans fallback */
+  --sans:"Hanken Grotesk","Open Sans",Arial,sans-serif;
+  --sans-med:"Hanken Grotesk","Open Sans",Arial,sans-serif;
   --maxw:1279px; --measure:68ch;
   --ease:cubic-bezier(.4,0,.2,1);
 }
