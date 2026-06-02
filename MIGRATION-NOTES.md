@@ -189,6 +189,14 @@ that over-split / re-wrap content instead of preserving authored semantic HTML**
   rebuilt block's boilerplate `.css`, not just the obvious chrome ones — any `.hero/.cards/…`
   selector left behind can silently out-rank or invert the ported design (`z-index:-1` here).
 
+- **ISSUE K — landing "In short" split stacked instead of side-by-side.** The landing intro
+  uses `.split--text-first` (prose | pullquote callout). That modifier only overrides
+  `grid-template-columns` — `display:grid` lives on the base `.split`. `split.js` set the
+  class to `'split--text-first'` *replacing* `'split'`, so the element had no `display:grid`
+  and stacked. The prototype uses both classes (`split split--text-first`). **FIX:** emit
+  `'split split--text-first'`. **Skill rule:** when a block applies a CSS *modifier* class,
+  keep the base class too — modifiers are written to extend the base, not stand alone.
+
 ## Skill-improvement summary (for review)
 1. **Don't pass prototype HTML through DA cells** — EDS strips wrapper divs + classes.
    Importer must emit clean cells + rebuild DOM in block JS. (ISSUE B — the big one.)
