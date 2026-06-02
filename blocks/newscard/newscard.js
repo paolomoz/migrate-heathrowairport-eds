@@ -1,19 +1,27 @@
-/* newscard — "Latest updates" dark photo cards. alt substrate.
-   Row 1: [eyebrow, heading]. Rows 2..N: [image, date, title, link]. */
+/* newscard — "Latest updates" tall photo cards (matches heathrow.com/expansion).
+   Row 1: [heading, View-All link]. Rows 2..N: [image, date, title, description, link].
+   Each card = full-bleed image + bottom gradient + date / title / description / "See update". */
 export default function decorate(block) {
   const rows = [...block.querySelectorAll(':scope > div')];
   const head = [...(rows[0]?.children || [])];
-  const eyebrow = (head[0]?.textContent || '').trim();
-  const heading = (head[1]?.textContent || '').trim();
+  const heading = (head[0]?.textContent || '').trim();
+  const viewAll = head[1]?.querySelector('a');
+
   const cards = rows.slice(1).map((row) => {
     const c = [...row.children];
     const pic = c[0]?.querySelector('picture, img');
     const date = (c[1]?.textContent || '').trim();
     const title = (c[2]?.textContent || '').trim();
-    const a = c[3]?.querySelector('a');
+    const desc = (c[3]?.textContent || '').trim();
+    const a = c[4]?.querySelector('a') || c[3]?.querySelector('a');
     const href = a ? a.getAttribute('href') : '#';
-    return `<a class="newscard" href="${href}">${pic ? pic.outerHTML : ''}<div class="meta"><span class="date">${date}</span><h3>${title}</h3><span class="more" style="margin-top:10px;font-family:var(--sans-med);font-weight:500">Read more →</span></div></a>`;
+    const label = (a?.textContent || 'See update').trim();
+    return `<a class="newscard" href="${href}">${pic ? pic.outerHTML : ''}<div class="meta"><span class="date">${date}</span><h3>${title}</h3>${desc ? `<p class="desc">${desc}</p>` : ''}<span class="more">${label}</span></div></a>`;
   }).join('');
+
+  const viewAllHTML = viewAll
+    ? `<a class="view-all" href="${viewAll.getAttribute('href')}">${viewAll.textContent.trim()}</a>`
+    : '';
   block.className = 'cmp alt';
-  block.innerHTML = `<div class="wrap"><div class="section-head"><p class="eyebrow">${eyebrow}</p><h2>${heading}</h2></div><div class="cards three">${cards}</div></div>`;
+  block.innerHTML = `<div class="wrap"><div class="newscard-head"><h2>${heading}</h2>${viewAllHTML}</div><div class="cards three">${cards}</div></div>`;
 }
