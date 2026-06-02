@@ -80,7 +80,8 @@ p{margin:0 0 1.1em}
 
 /* ---------- Hero ---------- */
 .cmp--hero{padding:0;background:var(--primary-deep)}
-.hero{position:relative;color:#fff}
+/* fixed banner height to match heathrow.com (.hero-img-bg 420/512/624) */
+.hero{position:relative;color:#fff;min-height:624px;display:flex;align-items:flex-end}
 .hero-media{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
 /* when the media is an EDS <picture>, the wrapper fills the hero and its <img> covers */
 .hero picture.hero-media{position:absolute;inset:0}
@@ -314,6 +315,7 @@ footer.footer-wrapper{padding:0}
 
 /* ---------- Responsive ---------- */
 @media(max-width:900px){
+  .hero{min-height:512px}
   .cards{grid-template-columns:repeat(2,1fr)}
   .split,.split--text-first,.phase{grid-template-columns:1fr;gap:28px}
   .footer-top{grid-template-columns:1fr 1fr;gap:28px}
@@ -325,6 +327,7 @@ footer.footer-wrapper{padding:0}
   .nav-toggle{display:inline-flex;background:none;border:1px solid rgba(255,255,255,.5);color:#fff;padding:8px 14px;font-family:var(--sans-med);font-weight:500;cursor:pointer}
 }
 @media(max-width:640px){
+  .hero{min-height:420px}
   .cards{grid-template-columns:1fr}
   .footer-top{grid-template-columns:1fr 1fr}
   .back-to-top{width:64px;height:64px}
