@@ -43,16 +43,22 @@ export default function decorate(block) {
     }
   }
 
-  // collect text, preserving authored elements
+  // collect text
   const wrap = document.createElement('div');
   wrap.className = 'wrap';
-  textCells.forEach((c) => { while (c.firstChild) wrap.append(c.firstChild); });
-
-  // tag the eyebrow: the first <p> that sits before the <h1>
-  const kids = [...wrap.children];
-  const h1i = kids.findIndex((e) => e.tagName === 'H1');
-  const eyebrow = kids.find((e, i) => e.tagName === 'P' && (h1i < 0 || i < h1i));
-  if (eyebrow) eyebrow.classList.add('eyebrow');
+  const hasHeading = textCells.some((c) => c.querySelector('h1, h2, h3'));
+  if (hasHeading) {
+    // preferred: preserve authored elements (eyebrow <p> / <h1> / lede <p>)
+    textCells.forEach((c) => { while (c.firstChild) wrap.append(c.firstChild); });
+    const kids = [...wrap.children];
+    const h1i = kids.findIndex((e) => e.tagName === 'H1');
+    const eyebrow = kids.find((e, i) => e.tagName === 'P' && (h1i < 0 || i < h1i));
+    if (eyebrow) eyebrow.classList.add('eyebrow');
+  } else {
+    // legacy positional cells: [eyebrow, h1, lede] as bare text
+    const t = (c) => (c ? c.textContent.trim() : '');
+    wrap.innerHTML = `${t(textCells[0]) ? `<p class="eyebrow">${t(textCells[0])}</p>` : ''}<h1>${t(textCells[1])}</h1>${t(textCells[2]) ? `<p>${t(textCells[2])}</p>` : ''}`;
+  }
 
   const hero = document.createElement('div');
   hero.className = `hero${mediaEl ? '' : ' hero--solid'}`;

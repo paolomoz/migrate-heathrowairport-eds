@@ -118,6 +118,66 @@ any pass-through). SVGs (zoom-badge, benefit icons) injected in JS, never in DA 
 - Faithful-to-prototype note: construction-programme intro shows a phase map as its primary
   figure because `primaryFig` matches phase-maps (role≠context) — same as the prototype.
 
+## Round 2 — eyeball-review fixes (sections 1 & 2, generalised site-wide)
+
+User reviewed the live site and found 8 issues. Root-caused, fixed, generalised across
+all 62 pages, re-deployed. Two themes dominate: **boilerplate CSS leakage** and **blocks
+that over-split / re-wrap content instead of preserving authored semantic HTML**.
+
+- **ISSUE D — boilerplate block CSS leaks onto the ported design (header + footer).**
+  The AEM boilerplate left full `blocks/header/header.css` and `blocks/footer/footer.css`.
+  `header nav a:any-link{color:currentcolor}` has specificity (0,1,3) and out-ranks our
+  `.site-nav a{color:#fff}` (0,1,1) → nav links rendered dark/illegible over the hero;
+  `header nav{padding;max-width;height}` shifted the bar. `footer .footer > div{max-width:1200px;
+  margin:auto}` matched our `.subscribe`/`.site-footer` bands and capped them at 1200px →
+  the full-bleed purple broke (beige gutters). **FIX:** gut both block CSS files to a comment;
+  all chrome styling lives in the ported global `styles.css`. **Skill rule:** when a block's
+  DOM is rebuilt in JS against the ported design system, the scaffolder's boilerplate
+  `.css` must be **emptied**, not left in place — boilerplate selectors silently out-specify
+  ported ones. (The mirror of ISSUE A: every block needs a `.css` file, but it must not carry
+  boilerplate rules.)
+
+- **ISSUE E — hero block dropped the image and double-wrapped text.** `hero.js` read four
+  positional cells and rebuilt `<p class=eyebrow>${innerHTML}</p><h1>${innerHTML}</h1>…`.
+  When a cell already held block elements (a hand-authored `<h1>`, or a pipeline `<p>`), the
+  re-wrap produced `<p class=eyebrow><p>…</p></p>` (browser splits it) and `<h1><p>…</p></h1>`,
+  and the image cell wasn't recognised so the hero fell back to solid purple — the image
+  vanished. **FIX:** hero.js now classifies cells (media = picture/img/mp4-link with no
+  heading; everything else is text), **reuses the EDS `<picture>` node** as `.hero-media`
+  (srcset preserved), and **moves the authored h1/p as-is** into `.wrap`, only tagging the
+  eyebrow. Pipeline now emits the hero as one rich-text cell + one media cell.
+  **Skill rule:** blocks should *preserve* authored semantic elements, not rebuild them from
+  `innerHTML` strings — re-wrapping is what breaks the moment a cell isn't bare text.
+
+- **ISSUE F — checklist lead-in wasn't a heading and sat on white.** `commitments`/`respond`
+  checklists rendered the intro as a `<p>` on a white band; the prototype has it as an `<h2>`
+  on grey. Also the authoring split one table row per item. **FIX:** checklist is now **one
+  semantic cell** — a heading (+optional intro) followed by a `<ul>` — and the block defaults
+  to the grey band (`plain` variant for white). Generalised to every checklist
+  (commitments, respond, keyAreas, highlights).
+
+- **ISSUE G — list content flattened to paragraphs.** Detail-intro `list` items were emitted
+  as `<p>` each (via `paras`) instead of a `<ul>`, so "In this consultation we are seeking
+  feedback on:" lost its bullets. **FIX:** pipeline appends a real `<ul>` to the intro prose;
+  text/split blocks already pass `innerHTML` through, so the list survives. Added `.prose ul`
+  styling.
+
+- **ISSUE H — a whole section was silently dropped (`docGrid`).** The "Overview of the
+  consultation documents" library grid on `introduction/this-consultation` had **no pipeline
+  handler at all**, so the section just disappeared. A field-coverage audit (compare every
+  key in `content/section*.json` against the keys the pipeline consumes) also found detail
+  `pullquote` (early-growth) being dropped — the prototype dropped it too, but losing real
+  content is wrong. **FIX:** added a `docgrid` block (+`.docgrid/.docgroup` CSS) and a handler;
+  detail `pullquote` now renders as an "In short" callout. **Skill rule:** the fill pipeline
+  must run a **content-field coverage check** and fail/warn on any content key it doesn't map,
+  so a section can never silently vanish.
+
+- **ISSUE I — split figure too tall / unbalanced.** Portrait map figures towered over their
+  prose column (`align-items:center` made it worse). **FIX:** `.split{align-items:start}` and
+  cap the split figure (`.split .figure-frame img{max-height:520px;object-fit:contain}`) so a
+  tall map fits its frame on the mist background without cropping. (The 2-col grid itself was
+  fine at desktop — the imbalance read as "stacked".)
+
 ## Skill-improvement summary (for review)
 1. **Don't pass prototype HTML through DA cells** — EDS strips wrapper divs + classes.
    Importer must emit clean cells + rebuild DOM in block JS. (ISSUE B — the big one.)
@@ -134,3 +194,19 @@ any pass-through). SVGs (zoom-badge, benefit icons) injected in JS, never in DA 
 7. **Bespoke-block + content-model fill pipeline** (vs generic-blocks) gave ~pixel-faithful
    reproduction of a bespoke design while staying authorable. Good fit when the design is
    the deliverable.
+8. **Empty the boilerplate block CSS, don't just add yours.** Leftover `header.css`/`footer.css`
+   boilerplate out-specifies the ported design system (`a:any-link{color:currentcolor}`,
+   `max-width:1200px`). When a block is rebuilt in JS against ported global CSS, reset its
+   block `.css` to a comment. (ISSUE D — pairs with #2.)
+9. **Blocks must preserve authored semantic HTML, not rebuild it from `innerHTML` strings.**
+   Re-wrapping cell text in `<p>`/`<h1>` breaks as soon as a cell holds block elements
+   (hand-authored or pipeline-produced) — nested `<p><p>`, dropped media. Classify cells,
+   reuse the EDS `<picture>` node, and *move* authored elements into place. (ISSUE E.)
+10. **Author in fewer, richer cells — closer to copy-pasting HTML.** One checklist cell
+    (heading + `<ul>`) beats one row per item; one hero rich-text cell + one media cell beats
+    four positional rows. More natural to author and far less fragile to EDS's cell cleaning.
+    (ISSUES E/F/G.)
+11. **The fill pipeline needs a content-field coverage check.** Audit every key in the source
+    content against the keys the pipeline maps; warn/fail on unmapped keys. A missing `docGrid`
+    handler silently deleted a whole section (ISSUE H). Silent truncation reads as "covered
+    everything" when it didn't.

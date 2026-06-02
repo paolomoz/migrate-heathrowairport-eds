@@ -7,8 +7,28 @@
    <li>s — rather than one table row per item. */
 export default function decorate(block) {
   const cell = block.querySelector(':scope > div > div');
-  const list = cell && cell.querySelector('ul, ol');
-  const headEls = cell ? [...cell.children].filter((el) => el !== list) : [];
+  let list = cell && cell.querySelector('ul, ol');
+  let headEls = [];
+
+  if (list) {
+    // preferred single-cell form: heading(s) + a <ul>
+    headEls = [...cell.children].filter((el) => el !== list);
+  } else {
+    // legacy form: row 1 = [title, intro], rows 2..N = one item per row
+    const rows = [...block.querySelectorAll(':scope > div')];
+    const head = [...(rows[0]?.children || [])];
+    const title = (head[0]?.textContent || '').trim();
+    const intro = (head[1]?.textContent || '').trim();
+    if (title) { const h = document.createElement('h2'); h.textContent = title; headEls.push(h); }
+    if (intro) { const h = document.createElement('h2'); h.textContent = intro; headEls.push(h); }
+    list = document.createElement('ul');
+    rows.slice(1).forEach((r) => {
+      const c = r.querySelector('div');
+      const li = document.createElement('li');
+      li.innerHTML = (c?.innerHTML || '').trim();
+      list.append(li);
+    });
+  }
 
   const plain = block.classList.contains('plain');
   block.className = `cmp${plain ? '' : ' alt'}`;
@@ -21,7 +41,7 @@ export default function decorate(block) {
     headEls.forEach((el) => head.append(el));
     wrap.append(head);
   }
-  if (list) {
+  if (list && list.children.length) {
     list.classList.add('checklist');
     wrap.append(list);
   }
