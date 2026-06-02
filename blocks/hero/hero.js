@@ -39,7 +39,12 @@ export default function decorate(block) {
     } else {
       // reuse the EDS-optimized <picture> (or <img>) node so its srcset survives
       mediaEl = mediaCell.querySelector('picture') || mediaCell.querySelector('img');
-      if (mediaEl) mediaEl.classList.add('hero-media');
+      if (mediaEl) {
+        mediaEl.classList.add('hero-media');
+        // the hero image is the LCP — load it eagerly, not lazily
+        const innerImg = mediaEl.tagName === 'IMG' ? mediaEl : mediaEl.querySelector('img');
+        if (innerImg) innerImg.loading = 'eager';
+      }
     }
   }
 
