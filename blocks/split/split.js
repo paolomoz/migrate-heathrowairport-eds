@@ -14,7 +14,8 @@ export default function decorate(block) {
       const cap = img ? (img.getAttribute('alt') || '') : '';
       rightHTML = `<figure class="figure"><div class="figure-frame"><span class="figure-cap">${cap}</span>${pic.outerHTML}</div><figcaption>${cap} — illustrative.</figcaption></figure>`;
     } else if (right.textContent.trim()) {
-      cls = 'split--text-first';
+      // .split--text-first only overrides the columns; it must keep .split (display:grid)
+      cls = 'split split--text-first';
       rightHTML = `<div class="callout"><p class="eyebrow">In short</p><h3 style="font-weight:400;line-height:1.3">${right.textContent.trim()}</h3></div>`;
     }
   }
