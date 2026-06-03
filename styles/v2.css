@@ -21,7 +21,7 @@ body.doc .doc-header-dl:hover { background: #fff; color: var(--primary); border-
 
 /* ---- two-column doc body (sticky rail | content) ---- */
 body.doc main { background: #fff; }
-body.doc main > .section.doc-body > div {
+body.doc main > .section.doc-body {
   display: grid;
   grid-template-columns: 290px minmax(0, 1fr);
   gap: 56px;
@@ -30,11 +30,11 @@ body.doc main > .section.doc-body > div {
   padding: 44px 24px 72px;
   align-items: start;
 }
-body.doc .doc-body .doc-nav-wrapper {
+body.doc .section.doc-body > .doc-nav-wrapper {
   grid-column: 1; grid-row: 1 / -1;
   position: sticky; top: 24px; align-self: start;
 }
-body.doc .doc-body > div > *:not(.doc-nav-wrapper) { grid-column: 2; min-width: 0; }
+body.doc .section.doc-body > *:not(.doc-nav-wrapper) { grid-column: 2; min-width: 0; }
 
 /* content blocks render INLINE inside the column (not as full-bleed bands) */
 body.doc .doc-body .cmp { padding: 0; background: transparent; margin: 0 0 32px; }
@@ -147,9 +147,9 @@ body.doc .band a.btn:hover { background: var(--primary-deep); }
 
 /* ---- responsive: stack the rail above the content ---- */
 @media (max-width: 900px) {
-  body.doc main > .section.doc-body > div { grid-template-columns: 1fr; gap: 28px; padding: 28px 20px 56px; }
-  body.doc .doc-body .doc-nav-wrapper { grid-column: 1; grid-row: auto; position: static; }
-  body.doc .doc-body > div > *:not(.doc-nav-wrapper) { grid-column: 1; }
+  body.doc main > .section.doc-body { grid-template-columns: 1fr; gap: 28px; padding: 28px 20px 56px; }
+  body.doc .section.doc-body > .doc-nav-wrapper { grid-column: 1; grid-row: auto; position: static; }
+  body.doc .section.doc-body > *:not(.doc-nav-wrapper) { grid-column: 1; }
   body.doc .doc-nav {
     border: 1px solid var(--border); padding: 18px 20px;
     max-height: 280px; overflow: auto;
