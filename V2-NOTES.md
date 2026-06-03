@@ -62,7 +62,25 @@ have-your-say band correct, 0 console errors).
   `hero`/`figure` changes are additive variants; all CSS gated under `body.docshell`.
 - Content: only `/v2/**` paths written in DA; POC root content untouched.
 
-## Next
-- Batch the remaining ~56 pages with `node tools/eds-fill-v2.mjs --all` → `eds-batch-v2.mjs --publish`,
-  then a full headless sweep. (Held for go-ahead — examples-first was the agreed checkpoint.)
-- v2 home: reuse the POC marketing home under `/v2/` (decision 1) — to be PUT during the batch.
+## Full site (Phase 3 complete)
+- **All 61 doc pages + the `/v2/` home are built and published** on the `v2` branch.
+  `eds-fill-v2.mjs --all` → 14 landings + 47 details; `eds-home-v2.mjs` → `/v2/` home
+  (POC marketing home, v2-prefixed links, NOT a doc-shell page).
+- **Verbatim guaranteed by a build guard.** `eds-fill-v2` now handles every content field
+  (added: landing `pullquote`/`highlights`/`keyMap`/`timeline`/subsection-cards;
+  detail `commitments`/`respond`/`docGrid`/`phases`/`timeline`) and a coverage check
+  **fails the build** on any unmapped source key (`HANDLED_LANDING`/`HANDLED_DETAIL`).
+  Audited against all 14 sections → 0 gaps. (Implements SKILL #11 / closes ISSUE H.)
+- **Full headless sweep of all 61 doc pages: ALL CLEAN** — grid resolves, no horizontal
+  overflow, 0 stretched images (the `.figure-frame img{height:auto}` fix also covers
+  gallery + phases, which both render via `.figure-frame`; cards use `.card-fig img`
+  object-fit:cover), 0 broken images, correct Contents-rail highlight, 0 console errors.
+  Spot-checked the newly-handled block types (phases, cards, keyMap, highlights, docGrid,
+  timeline) visually — all render faithfully.
+
+## Earlier review fixes (post-examples)
+- **doc-nav row span:** `grid-row: 1 / -1` resolved to span-1 (no explicit row tracks), so
+  row 1 inflated to the rail height and pushed content down. Fixed to `1 / span 99`.
+- **map stretch:** EDS writes natural `width/height` attrs on `<img>`; `.figure-frame img{width:100%}`
+  left the height hint → `object-fit:fill` squashed maps. Fixed with `.figure-frame img{height:auto}`.
+- **"Our proposal" header highlight** on doc-shell pages (aria-current → yellow underline); POC nav unaffected.
