@@ -98,3 +98,8 @@ have-your-say band correct, 0 console errors).
 - **map stretch:** EDS writes natural `width/height` attrs on `<img>`; `.figure-frame img{width:100%}`
   left the height hint → `object-fit:fill` squashed maps. Fixed with `.figure-frame img{height:auto}`.
 - **"Our proposal" header highlight** on doc-shell pages (aria-current → yellow underline); POC nav unaffected.
+- **Huge empty space on short pages** (e.g. utilities was 7,800px tall, ~5,300px void): the
+  `grid-row: 1 / span 99` nav span created 99 row tracks whose height inflated the section when
+  content was shorter than the tall Contents rail. Fixed by wrapping the content blocks into a
+  single `.doc-content` column (doc-nav.js) so the grid has exactly two children (rail | content),
+  one row — `doc-body` height = max(rail, content), no span. Swept all 61: ≤72px below content.
