@@ -1,52 +1,60 @@
 /* doc-nav — the sticky "Contents" rail for the document shell.
-   Row 1: single cell = the rail title ("Contents").
-   Item rows: [level, number, title, href, current]
-     level   = "chapter" | "sub"
-     current = "current" on the active page (else empty)
-   The current chapter's subsections are emitted inline by the fill pipeline, so the
-   rail shows the whole document with the active branch expanded. */
-export default function decorate(block) {
-  const rows = [...block.querySelectorAll(':scope > div')];
-  let title = 'Contents';
-  const items = [];
+   The whole document tree is authored ONCE in /blocks/doc-nav/nav-tree.json (built by
+   tools/eds-nav-tree-v2.mjs); this block fetches it and renders the rail, expanding the
+   current chapter and highlighting the current page from the URL. The page content only
+   carries an empty doc-nav marker — the tree is never duplicated per page. */
 
-  rows.forEach((row) => {
-    const cells = [...row.children];
-    if (cells.length <= 1) {
-      const t = (cells[0]?.textContent || '').trim();
-      if (t) title = t;
-      return;
-    }
-    const level = (cells[0]?.textContent || '').trim() || 'chapter';
-    const number = (cells[1]?.textContent || '').trim();
-    const label = (cells[2]?.textContent || '').trim();
-    const a = cells[3]?.querySelector('a');
-    const href = a ? a.getAttribute('href') : (cells[3]?.textContent || '').trim();
-    const current = (cells[4]?.textContent || '').trim() === 'current';
-    items.push({ level, number, label, href, current });
-  });
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
-  const lis = items.map((it) => {
-    const cls = `doc-nav-item doc-nav-${it.level === 'sub' ? 'sub' : 'chapter'}${it.current ? ' is-current' : ''}`;
-    const aria = it.current ? ' aria-current="page"' : '';
-    return `<li class="${cls}"><a href="${it.href}"${aria}><span class="doc-nav-num">${it.number}</span><span class="doc-nav-label">${it.label}</span></a></li>`;
-  }).join('');
-
-  block.className = 'doc-nav';
-  block.innerHTML = `<nav aria-label="${title}"><p class="doc-nav-title">${title}</p><ul>${lis}</ul></nav>`;
-
-  // Collapse the doc-body's content blocks into a single .doc-content column so the
-  // two-column grid has exactly two children (sticky rail | content). This avoids the
-  // row-span hack, whose empty rows inflated the section when a page's content was
-  // shorter than the (tall) Contents rail.
+// collapse the doc-body's other blocks into one .doc-content column → the grid has
+// exactly two children (sticky rail | content); done synchronously to avoid layout shift
+function wrapContent(block) {
   const section = block.closest('.section');
   const navWrapper = block.parentElement;
-  if (section && navWrapper && !section.querySelector(':scope > .doc-content')) {
-    const content = document.createElement('div');
-    content.className = 'doc-content';
-    [...section.children].forEach((child) => {
-      if (child !== navWrapper && !child.classList.contains('section-metadata')) content.append(child);
-    });
-    navWrapper.after(content);
+  if (!section || !navWrapper || section.querySelector(':scope > .doc-content')) return;
+  const content = document.createElement('div');
+  content.className = 'doc-content';
+  [...section.children].forEach((child) => {
+    if (child !== navWrapper && !child.classList.contains('section-metadata')) content.append(child);
+  });
+  navWrapper.after(content);
+}
+
+function currentFromPath() {
+  const m = window.location.pathname.replace(/\/+$/, '').match(/^\/v2\/([^/]+)(?:\/([^/]+))?/);
+  return { slug: m?.[1] || '', sub: m?.[2] || '' };
+}
+
+function buildNav(tree, cur) {
+  const items = [];
+  tree.forEach((ch) => {
+    const chapterCurrent = ch.slug === cur.slug && !cur.sub;
+    items.push(`<li class="doc-nav-item doc-nav-chapter${chapterCurrent ? ' is-current' : ''}">`
+      + `<a href="/v2/${ch.slug}"${chapterCurrent ? ' aria-current="page"' : ''}>`
+      + `<span class="doc-nav-num">${esc(String(ch.n).padStart(2, '0'))}</span>`
+      + `<span class="doc-nav-label">${esc(ch.title)}</span></a></li>`);
+    if (ch.slug === cur.slug) {
+      ch.subs.forEach((sb) => {
+        const subCurrent = sb.slug === cur.sub;
+        items.push(`<li class="doc-nav-item doc-nav-sub${subCurrent ? ' is-current' : ''}">`
+          + `<a href="/v2/${ch.slug}/${sb.slug}"${subCurrent ? ' aria-current="page"' : ''}>`
+          + `<span class="doc-nav-num">${esc(sb.number)}</span>`
+          + `<span class="doc-nav-label">${esc(sb.title)}</span></a></li>`);
+      });
+    }
+  });
+  return `<nav aria-label="Contents"><p class="doc-nav-title">Contents</p><ul>${items.join('')}</ul></nav>`;
+}
+
+export default async function decorate(block) {
+  wrapContent(block);
+  block.className = 'doc-nav';
+  block.innerHTML = '<nav aria-label="Contents"><p class="doc-nav-title">Contents</p></nav>';
+  try {
+    const base = window.hlx?.codeBasePath || '';
+    const tree = await (await fetch(`${base}/blocks/doc-nav/nav-tree.json`)).json();
+    block.innerHTML = buildNav(tree, currentFromPath());
+  } catch (e) {
+    // leave the "Contents" title if the tree can't be fetched
   }
 }
