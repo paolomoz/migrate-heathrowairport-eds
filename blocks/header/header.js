@@ -12,12 +12,15 @@ const SEARCH = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strok
 
 export default async function decorate(block) {
   block.textContent = '';
+  // On the v2 consultation document (body.docshell) the whole document sits under the
+  // "Our proposal" site section, so mark that nav item current. POC pages are unaffected.
+  const onDoc = document.body.classList.contains('docshell');
   const header = document.createElement('div');
   header.className = 'site-header';
   header.innerHTML = `<div class="wrap-wide base-header">
     <a class="logo-link" href="/"><img class="white-logo" src="/icons/logo.png" alt="Heathrow Expansion" height="48"><img class="dark-logo" src="/icons/dark-logo.png" alt="Heathrow Expansion" height="48"></a>
     <button class="nav-toggle" aria-label="Menu">Menu</button>
-    <nav class="site-nav" id="nav">${NAV.map(([l, h]) => `<a href="${h}">${l}</a>`).join('')}<button class="header-search" aria-label="Search">${SEARCH}</button></nav>
+    <nav class="site-nav" id="nav">${NAV.map(([l, h]) => `<a href="${h}"${onDoc && l === 'Our proposal' ? ' aria-current="page"' : ''}>${l}</a>`).join('')}<button class="header-search" aria-label="Search">${SEARCH}</button></nav>
   </div>`;
   header.querySelector('.nav-toggle').addEventListener('click', () => {
     header.querySelector('#nav').classList.toggle('open');
