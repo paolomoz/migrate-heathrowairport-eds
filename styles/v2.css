@@ -31,11 +31,11 @@ body.docshell main > .section.doc-body {
   align-items: start;
 }
 body.docshell .section.doc-body > .doc-nav-wrapper {
-  grid-column: 1; grid-row: 1 / span 99; /* span all content rows so the rail's height
-    doesn't inflate row 1 (1/-1 resolves to span-1 with no explicit row tracks) */
-  position: sticky; top: 24px; align-self: start;
+  grid-column: 1; position: sticky; top: 24px; align-self: start;
 }
-body.docshell .section.doc-body > *:not(.doc-nav-wrapper) { grid-column: 2; min-width: 0; }
+/* doc-nav.js wraps the remaining blocks into .doc-content → the grid has exactly two
+   children (rail | content), one row, so a short page never inflates the section */
+body.docshell .section.doc-body > .doc-content { grid-column: 2; min-width: 0; }
 
 /* content blocks render INLINE inside the column (not as full-bleed bands) */
 body.docshell .doc-body .cmp { padding: 0; background: transparent; margin: 0 0 32px; }

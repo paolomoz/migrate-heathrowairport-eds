@@ -34,4 +34,19 @@ export default function decorate(block) {
 
   block.className = 'doc-nav';
   block.innerHTML = `<nav aria-label="${title}"><p class="doc-nav-title">${title}</p><ul>${lis}</ul></nav>`;
+
+  // Collapse the doc-body's content blocks into a single .doc-content column so the
+  // two-column grid has exactly two children (sticky rail | content). This avoids the
+  // row-span hack, whose empty rows inflated the section when a page's content was
+  // shorter than the (tall) Contents rail.
+  const section = block.closest('.section');
+  const navWrapper = block.parentElement;
+  if (section && navWrapper && !section.querySelector(':scope > .doc-content')) {
+    const content = document.createElement('div');
+    content.className = 'doc-content';
+    [...section.children].forEach((child) => {
+      if (child !== navWrapper && !child.classList.contains('section-metadata')) content.append(child);
+    });
+    navWrapper.after(content);
+  }
 }
