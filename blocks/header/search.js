@@ -93,7 +93,7 @@ function build() {
     <div class="doc-search-backdrop"></div>
     <div class="doc-search-panel">
       <div class="doc-search-bar">
-        <input type="search" class="doc-search-input" placeholder="Search the consultation document…" autocomplete="off" spellcheck="false" aria-label="Search">
+        <input type="text" class="doc-search-input" placeholder="Search the consultation document…" autocomplete="off" spellcheck="false" aria-label="Search">
         <button type="button" class="doc-search-close" aria-label="Close search">&times;</button>
       </div>
       <p class="doc-search-status" aria-live="polite"></p>
