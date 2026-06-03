@@ -94,6 +94,17 @@ have-your-say band correct, 0 console errors).
 - Validated headless: open+focus, ranked results with `<mark>` highlights, click-nav,
   arrow+Enter nav, works on doc pages and the home, 0 console errors.
 
+## Engagement / delight
+- **Real "Listen" (TTS).** The section-bar Listen button now reads the page's prose via the Web
+  Speech API (`speechSynthesis`), chunked by sentence; toggles Listen↔Stop with a pulsing icon;
+  hidden if the browser has no TTS. Reads only content blocks (not chrome/nav/pager).
+- **Runway-lights reading progress + landing plane.** A fixed top bar (created on `/v2/` doc pages
+  only) shows read-progress as a lit accent "runway centerline" with grey dashes ahead and a
+  paper-plane at the leading edge; the plane "touches down" (animation) when you reach the section
+  end. Progress = content-area scrolled-into-view / content height (robust on short & long pages;
+  defers initial read so it never lands on load). Honours `prefers-reduced-motion`.
+  Built in `blocks/section-bar/section-bar.js`; styles under `.reading-runway` in v2.css.
+
 ## Earlier review fixes (post-examples)
 - **doc-nav row span:** `grid-row: 1 / -1` resolved to span-1 (no explicit row tracks), so
   row 1 inflated to the rail height and pushed content down. Fixed to `1 / span 99`.
