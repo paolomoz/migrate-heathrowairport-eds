@@ -51,9 +51,11 @@ have-your-say band correct, 0 console errors).
 ## Deviations from the wireframe (intentional)
 - **Author photo → initials avatar.** The foreword wireframe shows a photo of the author; we render
   a "JH" initials avatar (we do not re-host a person's photograph — same policy as the brand font).
-- **`/v2/nav` fragment → inline.** The delta doc proposed a fetched nav fragment; the fill pipeline
-  emits the Contents tree inline per page instead (deterministic, no extra fetch). Each page shows
-  all 14 chapters with the active chapter's subsections expanded and the current page highlighted.
+- **Contents rail = single dynamic source (not duplicated per page).** The whole document tree is
+  authored ONCE in `blocks/doc-nav/nav-tree.json` (built by `tools/eds-nav-tree-v2.mjs`). Each page's
+  content carries only an empty `doc-nav` marker; `doc-nav.js` fetches the tree and renders the rail,
+  expanding the current chapter and highlighting the current page from `location.pathname`. (Earlier
+  the fill emitted the ~25-row tree inline on every page — removed; published content now has 0 tree rows.)
 - **Date eyebrow = "June 2019"** (the real consultation date) rather than the wireframe's "June 2026"
   placeholder.
 
