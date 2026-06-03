@@ -31,7 +31,8 @@ body.docshell main > .section.doc-body {
   align-items: start;
 }
 body.docshell .section.doc-body > .doc-nav-wrapper {
-  grid-column: 1; grid-row: 1 / -1;
+  grid-column: 1; grid-row: 1 / span 99; /* span all content rows so the rail's height
+    doesn't inflate row 1 (1/-1 resolves to span-1 with no explicit row tracks) */
   position: sticky; top: 24px; align-self: start;
 }
 body.docshell .section.doc-body > *:not(.doc-nav-wrapper) { grid-column: 2; min-width: 0; }
@@ -91,6 +92,11 @@ body.docshell .hero--doc .wrap {
 body.docshell .hero--doc h1 { color: #fff; font-size: clamp(1.9rem, 3.4vw, 2.8rem); max-width: 18ch; margin: 0 0 .35em; }
 body.docshell .hero--doc p { color: #fff; opacity: .96; max-width: 60ch; margin: 0; font-size: 1.05rem; line-height: 1.5; }
 body.docshell .hero--doc.hero--solid { background: linear-gradient(to right bottom, var(--primary) 55%, var(--primary-deep)); }
+
+/* ---- figures: preserve aspect ratio (EDS writes natural width/height attrs on the
+   <img>; .figure-frame img{width:100%} overrides only width, leaving the presentational
+   height hint → object-fit:fill squashes the image. Force height:auto.) ---- */
+body.docshell .figure-frame img { height: auto; }
 
 /* ---- interactive-map figure ---- */
 body.docshell .figure--map .figure-frame { position: relative; cursor: zoom-in; background: var(--mist); }
