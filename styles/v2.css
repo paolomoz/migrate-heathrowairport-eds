@@ -1,27 +1,27 @@
 /* ============================================================================
    V2 DOCUMENT SHELL — layout-only delta on top of the POC design system.
-   EVERY rule is scoped under body.doc (set from page metadata template:doc), so
+   EVERY rule is scoped under body.docshell (set from page metadata template:docshell), so
    this file is inert on every POC page. No tokens/fonts/colours are redefined —
    v2 is an IA/layout change, not a restyle. Reuses --primary/--accent/--mist/etc.
    ============================================================================ */
 
 /* ---- doc-header band (full-bleed, above the shell) ---- */
-body.doc .doc-header { background: var(--primary); color: #fff; }
-body.doc .doc-header .wrap { max-width: var(--maxw); margin: 0 auto; padding: 132px 24px 44px; }
-body.doc .doc-header .eyebrow { color: rgba(255, 255, 255, .82); margin: 0 0 10px; }
-body.doc .doc-header h1 { color: #fff; font-size: clamp(2rem, 4vw, 3rem); margin: 0 0 26px; }
-body.doc .doc-header-dl {
+body.docshell .doc-header { background: var(--primary); color: #fff; }
+body.docshell .doc-header .wrap { max-width: var(--maxw); margin: 0 auto; padding: 132px 24px 44px; }
+body.docshell .doc-header .eyebrow { color: rgba(255, 255, 255, .82); margin: 0 0 10px; }
+body.docshell .doc-header h1 { color: #fff; font-size: clamp(2rem, 4vw, 3rem); margin: 0 0 26px; }
+body.docshell .doc-header-dl {
   display: inline-flex; align-items: center; gap: 10px;
   border: 1px solid rgba(255, 255, 255, .6); color: #fff; text-decoration: none;
   padding: 12px 22px; font-family: var(--sans-med); font-weight: 500;
   transition: background .2s var(--ease), color .2s var(--ease);
 }
-body.doc .doc-header-dl svg { width: 20px; height: 20px; }
-body.doc .doc-header-dl:hover { background: #fff; color: var(--primary); border-color: #fff; }
+body.docshell .doc-header-dl svg { width: 20px; height: 20px; }
+body.docshell .doc-header-dl:hover { background: #fff; color: var(--primary); border-color: #fff; }
 
 /* ---- two-column doc body (sticky rail | content) ---- */
-body.doc main { background: #fff; }
-body.doc main > .section.doc-body {
+body.docshell main { background: #fff; }
+body.docshell main > .section.doc-body {
   display: grid;
   grid-template-columns: 290px minmax(0, 1fr);
   gap: 56px;
@@ -30,129 +30,129 @@ body.doc main > .section.doc-body {
   padding: 44px 24px 72px;
   align-items: start;
 }
-body.doc .section.doc-body > .doc-nav-wrapper {
+body.docshell .section.doc-body > .doc-nav-wrapper {
   grid-column: 1; grid-row: 1 / -1;
   position: sticky; top: 24px; align-self: start;
 }
-body.doc .section.doc-body > *:not(.doc-nav-wrapper) { grid-column: 2; min-width: 0; }
+body.docshell .section.doc-body > *:not(.doc-nav-wrapper) { grid-column: 2; min-width: 0; }
 
 /* content blocks render INLINE inside the column (not as full-bleed bands) */
-body.doc .doc-body .cmp { padding: 0; background: transparent; margin: 0 0 32px; }
-body.doc .doc-body .cmp:last-child { margin-bottom: 0; }
-body.doc .doc-body .cmp .wrap,
-body.doc .doc-body .cmp .wrap-wide { max-width: none; margin: 0; padding: 0; }
+body.docshell .doc-body .cmp { padding: 0; background: transparent; margin: 0 0 32px; }
+body.docshell .doc-body .cmp:last-child { margin-bottom: 0; }
+body.docshell .doc-body .cmp .wrap,
+body.docshell .doc-body .cmp .wrap-wide { max-width: none; margin: 0; padding: 0; }
 
 /* ---- Contents rail ---- */
-body.doc .doc-nav { font-size: 14px; line-height: 1.4; }
-body.doc .doc-nav-title { font-size: 12px; color: #7a7a7a; letter-spacing: .04em; margin: 0 0 14px; }
-body.doc .doc-nav ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 9px; }
-body.doc .doc-nav-item a { display: flex; gap: 8px; text-decoration: none; color: var(--text); align-items: baseline; }
-body.doc .doc-nav-num { color: var(--muted); min-width: 26px; font-variant-numeric: tabular-nums; flex: none; }
-body.doc .doc-nav-chapter > a { font-family: var(--sans-med); font-weight: 500; }
-body.doc .doc-nav-sub { padding-left: 26px; }
-body.doc .doc-nav-sub a { color: var(--muted); }
-body.doc .doc-nav-item a:hover { color: var(--primary); }
-body.doc .doc-nav-item.is-current > a { color: var(--primary); font-weight: 600; }
-body.doc .doc-nav-item.is-current { box-shadow: inset 3px 0 0 var(--accent); padding-left: 12px; margin-left: -15px; }
-body.doc .doc-nav-sub.is-current { padding-left: 38px; margin-left: -15px; }
+body.docshell .doc-nav { font-size: 14px; line-height: 1.4; }
+body.docshell .doc-nav-title { font-size: 12px; color: #7a7a7a; letter-spacing: .04em; margin: 0 0 14px; }
+body.docshell .doc-nav ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 9px; }
+body.docshell .doc-nav-item a { display: flex; gap: 8px; text-decoration: none; color: var(--text); align-items: baseline; }
+body.docshell .doc-nav-num { color: var(--muted); min-width: 26px; font-variant-numeric: tabular-nums; flex: none; }
+body.docshell .doc-nav-chapter > a { font-family: var(--sans-med); font-weight: 500; }
+body.docshell .doc-nav-sub { padding-left: 26px; }
+body.docshell .doc-nav-sub a { color: var(--muted); }
+body.docshell .doc-nav-item a:hover { color: var(--primary); }
+body.docshell .doc-nav-item.is-current > a { color: var(--primary); font-weight: 600; }
+body.docshell .doc-nav-item.is-current { box-shadow: inset 3px 0 0 var(--accent); padding-left: 12px; margin-left: -15px; }
+body.docshell .doc-nav-sub.is-current { padding-left: 38px; margin-left: -15px; }
 
 /* ---- section bar ---- */
-body.doc .section-bar { margin: 0 0 22px; }
-body.doc .section-bar-inner {
+body.docshell .section-bar { margin: 0 0 22px; }
+body.docshell .section-bar-inner {
   display: flex; align-items: center; justify-content: space-between; gap: 16px;
   padding: 0 0 14px; border-bottom: 1px solid var(--border);
 }
-body.doc .section-bar-label { font-family: var(--sans-med); font-weight: 600; font-size: .95rem; color: var(--text); }
-body.doc .section-bar-meta { display: flex; align-items: center; gap: 16px; }
-body.doc .section-bar-time { color: var(--muted); font-size: .8rem; white-space: nowrap; }
-body.doc .section-bar-listen {
+body.docshell .section-bar-label { font-family: var(--sans-med); font-weight: 600; font-size: .95rem; color: var(--text); }
+body.docshell .section-bar-meta { display: flex; align-items: center; gap: 16px; }
+body.docshell .section-bar-time { color: var(--muted); font-size: .8rem; white-space: nowrap; }
+body.docshell .section-bar-listen {
   display: inline-flex; align-items: center; gap: 7px;
   border: 1px solid var(--border); background: #fff; border-radius: 999px;
   padding: 6px 15px; font: inherit; font-size: .8rem; color: var(--text); cursor: pointer;
   transition: border-color .2s var(--ease), color .2s var(--ease);
 }
-body.doc .section-bar-listen svg { width: 16px; height: 16px; }
-body.doc .section-bar-listen:hover { border-color: var(--primary); color: var(--primary); }
+body.docshell .section-bar-listen svg { width: 16px; height: 16px; }
+body.docshell .section-bar-listen:hover { border-color: var(--primary); color: var(--primary); }
 
 /* ---- in-column hero (image with overlaid title + lead) ---- */
-body.doc .hero-doc { margin: 0 0 30px; }
-body.doc .hero--doc {
+body.docshell .hero-doc { margin: 0 0 30px; }
+body.docshell .hero--doc {
   position: relative; overflow: hidden; min-height: 440px;
   display: flex; color: #fff; background: var(--primary-deep);
 }
-body.doc .hero--doc .hero-media { position: absolute; inset: 0; width: 100%; height: 100%; }
-body.doc .hero--doc picture.hero-media img,
-body.doc .hero--doc img.hero-media { width: 100%; height: 100%; object-fit: cover; display: block; }
-body.doc .hero--doc .wrap {
+body.docshell .hero--doc .hero-media { position: absolute; inset: 0; width: 100%; height: 100%; }
+body.docshell .hero--doc picture.hero-media img,
+body.docshell .hero--doc img.hero-media { width: 100%; height: 100%; object-fit: cover; display: block; }
+body.docshell .hero--doc .wrap {
   position: relative; z-index: 2; margin-top: auto; width: 100%; max-width: none;
   padding: 40px 36px 32px; color: #fff;
   background: linear-gradient(0deg, rgba(18, 4, 34, .82), rgba(18, 4, 34, .35) 60%, rgba(18, 4, 34, 0));
 }
-body.doc .hero--doc h1 { color: #fff; font-size: clamp(1.9rem, 3.4vw, 2.8rem); max-width: 18ch; margin: 0 0 .35em; }
-body.doc .hero--doc p { color: #fff; opacity: .96; max-width: 60ch; margin: 0; font-size: 1.05rem; line-height: 1.5; }
-body.doc .hero--doc.hero--solid { background: linear-gradient(to right bottom, var(--primary) 55%, var(--primary-deep)); }
+body.docshell .hero--doc h1 { color: #fff; font-size: clamp(1.9rem, 3.4vw, 2.8rem); max-width: 18ch; margin: 0 0 .35em; }
+body.docshell .hero--doc p { color: #fff; opacity: .96; max-width: 60ch; margin: 0; font-size: 1.05rem; line-height: 1.5; }
+body.docshell .hero--doc.hero--solid { background: linear-gradient(to right bottom, var(--primary) 55%, var(--primary-deep)); }
 
 /* ---- interactive-map figure ---- */
-body.doc .figure--map .figure-frame { position: relative; cursor: zoom-in; background: var(--mist); }
-body.doc .figure-map-overlay {
+body.docshell .figure--map .figure-frame { position: relative; cursor: zoom-in; background: var(--mist); }
+body.docshell .figure-map-overlay {
   position: absolute; inset: 0; z-index: 2;
   display: flex; flex-direction: column; justify-content: space-between; align-items: flex-start;
   padding: 18px; pointer-events: none;
 }
-body.doc .figure-map-title {
+body.docshell .figure-map-title {
   background: var(--primary); color: #fff; padding: 7px 14px;
   font-family: var(--sans-med); font-weight: 500; font-size: .9rem;
 }
-body.doc .figure-map-cta {
+body.docshell .figure-map-cta {
   background: #fff; color: var(--primary); padding: 9px 16px;
   font-family: var(--sans-med); font-weight: 600; font-size: .85rem;
   box-shadow: 0 1px 5px rgba(0, 0, 0, .18); display: inline-flex; gap: 8px;
 }
 
 /* ---- author profile card ---- */
-body.doc .profile { margin: 8px 0 30px; }
-body.doc .profile-card { display: flex; gap: 28px; align-items: center; background: var(--mist); padding: 28px 32px; }
-body.doc .profile-photo { flex: none; }
-body.doc .profile-photo img { width: 150px; height: 150px; object-fit: cover; }
-body.doc .profile-photo--placeholder {
+body.docshell .profile { margin: 8px 0 30px; }
+body.docshell .profile-card { display: flex; gap: 28px; align-items: center; background: var(--mist); padding: 28px 32px; }
+body.docshell .profile-photo { flex: none; }
+body.docshell .profile-photo img { width: 150px; height: 150px; object-fit: cover; }
+body.docshell .profile-photo--placeholder {
   width: 88px; height: 88px; border-radius: 50%; background: var(--primary); color: #fff;
   display: flex; align-items: center; justify-content: center;
   font-family: var(--sans-med); font-weight: 600; font-size: 1.7rem;
 }
-body.doc .profile-name { font-family: var(--sans-med); font-weight: 600; font-size: 1.15rem; margin: 0; }
-body.doc .profile-role { color: var(--muted); margin: .2em 0 0; }
+body.docshell .profile-name { font-family: var(--sans-med); font-weight: 600; font-size: 1.15rem; margin: 0; }
+body.docshell .profile-role { color: var(--muted); margin: .2em 0 0; }
 
 /* ---- doc pager (boxed prev / next) ---- */
-body.doc .doc-body .pager { border-top: 1px solid var(--border); padding-top: 28px; margin-top: 8px; }
-body.doc .doc-body .pager a.btn {
+body.docshell .doc-body .pager { border-top: 1px solid var(--border); padding-top: 28px; margin-top: 8px; }
+body.docshell .doc-body .pager a.btn {
   border: 1px solid var(--border); background: #fff; color: var(--text);
   padding: 16px 22px; border-radius: 0; font-weight: 500;
 }
-body.doc .doc-body .pager a.btn-primary { color: var(--primary); }
-body.doc .doc-body .pager a.btn:hover { border-color: var(--primary); color: var(--primary); background: #fff; }
-body.doc .doc-body .pager a.btn-ghost::after,
-body.doc .doc-body .pager a.btn-primary::after { content: none; }
+body.docshell .doc-body .pager a.btn-primary { color: var(--primary); }
+body.docshell .doc-body .pager a.btn:hover { border-color: var(--primary); color: var(--primary); background: #fff; }
+body.docshell .doc-body .pager a.btn-ghost::after,
+body.docshell .doc-body .pager a.btn-primary::after { content: none; }
 
 /* ---- "Have your say" promo band — light, matching the wireframe ---- */
-body.doc .band { background: var(--mist); color: var(--text); }
-body.doc .band .wrap { padding: 64px 24px; }
-body.doc .band .eyebrow { color: var(--muted) !important; }
-body.doc .band h2 { color: var(--text); }
-body.doc .band p { color: var(--muted); }
-body.doc .band a.btn {
+body.docshell .band { background: var(--mist); color: var(--text); }
+body.docshell .band .wrap { padding: 64px 24px; }
+body.docshell .band .eyebrow { color: var(--muted) !important; }
+body.docshell .band h2 { color: var(--text); }
+body.docshell .band p { color: var(--muted); }
+body.docshell .band a.btn {
   background: var(--primary); color: #fff; border: none; padding: 14px 30px;
 }
-body.doc .band a.btn::after { content: none; }
-body.doc .band a.btn:hover { background: var(--primary-deep); }
+body.docshell .band a.btn::after { content: none; }
+body.docshell .band a.btn:hover { background: var(--primary-deep); }
 
 /* ---- responsive: stack the rail above the content ---- */
 @media (max-width: 900px) {
-  body.doc main > .section.doc-body { grid-template-columns: 1fr; gap: 28px; padding: 28px 20px 56px; }
-  body.doc .section.doc-body > .doc-nav-wrapper { grid-column: 1; grid-row: auto; position: static; }
-  body.doc .section.doc-body > *:not(.doc-nav-wrapper) { grid-column: 1; }
-  body.doc .doc-nav {
+  body.docshell main > .section.doc-body { grid-template-columns: 1fr; gap: 28px; padding: 28px 20px 56px; }
+  body.docshell .section.doc-body > .doc-nav-wrapper { grid-column: 1; grid-row: auto; position: static; }
+  body.docshell .section.doc-body > *:not(.doc-nav-wrapper) { grid-column: 1; }
+  body.docshell .doc-nav {
     border: 1px solid var(--border); padding: 18px 20px;
     max-height: 280px; overflow: auto;
   }
-  body.doc .doc-header .wrap { padding-top: 120px; }
+  body.docshell .doc-header .wrap { padding-top: 120px; }
 }
