@@ -154,6 +154,32 @@ body.docshell .band a.btn {
 body.docshell .band a.btn::after { content: none; }
 body.docshell .band a.btn:hover { background: var(--primary-deep); }
 
+/* ---- consultation-document search overlay (created by JS on /v2/ pages only,
+   so .doc-search never appears on POC pages — kept unscoped because the /v2/ home
+   is not a doc-shell page but still has search) ---- */
+.doc-search { position: fixed; inset: 0; z-index: 2000; display: none; }
+.doc-search.open { display: block; }
+.doc-search-backdrop { position: absolute; inset: 0; background: rgba(18, 4, 34, .55); }
+.doc-search-panel {
+  position: relative; max-width: 720px; margin: 8vh auto 0; background: #fff;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, .35); max-height: 84vh; display: flex;
+  flex-direction: column; border-top: 4px solid var(--accent);
+}
+.doc-search-bar { display: flex; align-items: center; gap: 12px; padding: 20px 24px; border-bottom: 1px solid var(--border); }
+.doc-search-input { flex: 1; border: none; outline: none; font: inherit; font-size: 1.25rem; color: var(--text); background: none; }
+.doc-search-close { border: none; background: none; font-size: 1.8rem; line-height: 1; color: var(--muted); cursor: pointer; padding: 0 4px; }
+.doc-search-close:hover { color: var(--primary); }
+.doc-search-status { margin: 0; padding: 10px 24px; font-size: .72rem; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; min-height: 16px; }
+.doc-search-results { list-style: none; margin: 0; padding: 0 12px 12px; overflow: auto; }
+.doc-search-hit { display: block; padding: 14px 16px; text-decoration: none; color: var(--text); }
+.doc-search-hit:hover, .doc-search-hit.is-active { background: var(--mist); }
+.doc-search-hit-label { display: block; font-size: .72rem; letter-spacing: .04em; color: var(--primary); font-family: var(--sans-med); font-weight: 600; margin-bottom: 2px; }
+.doc-search-hit-title { display: block; font-family: var(--sans-med); font-weight: 600; font-size: 1.05rem; margin-bottom: 3px; }
+.doc-search-hit-snip { display: block; font-size: .9rem; color: var(--muted); line-height: 1.45; }
+.doc-search-hit-snip mark { background: var(--accent); color: var(--text); padding: 0 1px; }
+.doc-search-empty { padding: 20px 16px; color: var(--muted); }
+@media (max-width: 640px) { .doc-search-panel { margin: 0; max-height: 100vh; height: 100%; } }
+
 /* ---- responsive: stack the rail above the content ---- */
 @media (max-width: 900px) {
   body.docshell main > .section.doc-body { grid-template-columns: 1fr; gap: 28px; padding: 28px 20px 56px; }

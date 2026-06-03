@@ -25,5 +25,12 @@ export default async function decorate(block) {
   header.querySelector('.nav-toggle').addEventListener('click', () => {
     header.querySelector('#nav').classList.toggle('open');
   });
+  // wire the search button to the consultation-document search on v2 pages
+  if (window.location.pathname.startsWith('/v2/')) {
+    header.querySelector('.header-search').addEventListener('click', async () => {
+      const { default: openSearch } = await import('./search.js');
+      openSearch();
+    });
+  }
   block.append(header);
 }
