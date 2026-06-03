@@ -10,6 +10,9 @@
    produced by the fill pipeline or hand-authored in DA, and never double-wraps a
    <p> inside another <p>. */
 export default function decorate(block) {
+  // v2 doc shell: the hero sits *inside* the content column with title + lead
+  // overlaid on the image (not a full-bleed band). Additive — default path unchanged.
+  const isDoc = block.classList.contains('doc');
   const cells = [...block.querySelectorAll(':scope > div > div')];
 
   // classify cells: the media cell holds a picture/img/mp4 link and no heading
@@ -66,10 +69,11 @@ export default function decorate(block) {
   }
 
   const hero = document.createElement('div');
-  hero.className = `hero${mediaEl ? '' : ' hero--solid'}`;
+  hero.className = `hero${isDoc ? ' hero--doc' : ''}${mediaEl ? '' : ' hero--solid'}`;
   if (mediaEl) hero.append(mediaEl);
   hero.append(wrap);
 
-  block.className = 'cmp cmp--hero';
+  // doc variant renders in-column (no full-bleed .cmp band)
+  block.className = isDoc ? 'hero-doc' : 'cmp cmp--hero';
   block.replaceChildren(hero);
 }
