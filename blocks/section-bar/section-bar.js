@@ -54,10 +54,11 @@ function setupRunway() {
   const update = () => {
     ticking = false;
     const content = document.querySelector('.doc-content');
-    if (!content) return;
-    const rect = content.getBoundingClientRect();
-    const total = content.offsetHeight - window.innerHeight;
-    const p = total > 0 ? Math.max(0, Math.min(1, -rect.top / total)) : 1;
+    if (!content || !content.offsetHeight) return;
+    // how much of the content area has scrolled into view, normalised by its height
+    const top = content.getBoundingClientRect().top + window.scrollY;
+    const seen = window.scrollY + window.innerHeight - top;
+    const p = Math.max(0, Math.min(1, seen / content.offsetHeight));
     fill.style.width = `${p * 100}%`;
     plane.style.left = `${p * 100}%`;
     if (p >= 0.995 && !landed) { landed = true; runway.classList.add('landed'); }
@@ -66,7 +67,9 @@ function setupRunway() {
   const onScroll = () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } };
   window.addEventListener('scroll', onScroll, { passive: true });
   window.addEventListener('resize', onScroll);
-  update();
+  window.addEventListener('load', onScroll);
+  onScroll();
+  setTimeout(onScroll, 600); // recompute once layout/images have settled
 }
 
 export default function decorate(block) {
