@@ -74,6 +74,29 @@ body.docshell .section-bar-listen {
 }
 body.docshell .section-bar-listen svg { width: 16px; height: 16px; }
 body.docshell .section-bar-listen:hover { border-color: var(--primary); color: var(--primary); }
+body.docshell .section-bar-listen.is-playing { background: var(--primary); color: #fff; border-color: var(--primary); }
+body.docshell .section-bar-listen.is-playing svg { animation: listen-pulse 1s var(--ease) infinite; }
+@keyframes listen-pulse { 0%, 100% { opacity: 1; } 50% { opacity: .35; } }
+
+/* ---- runway-lights reading progress (fixed top bar; created on /v2/ doc pages only) ---- */
+.reading-runway { position: fixed; top: 0; left: 0; right: 0; height: 22px; z-index: 1500; pointer-events: none; }
+.reading-runway .runway-track, .reading-runway .runway-fill { position: absolute; left: 0; bottom: 0; height: 3px; }
+.reading-runway .runway-track { right: 0; background: repeating-linear-gradient(90deg, rgba(0, 0, 0, .18) 0 10px, transparent 10px 26px); }
+.reading-runway .runway-fill { width: 0; background: var(--accent); box-shadow: 0 0 8px rgba(255, 208, 0, .85); transition: width .08s linear; }
+.reading-runway .runway-plane { position: absolute; bottom: 2px; left: 0; transform: translateX(-50%); color: var(--primary); transition: left .08s linear; }
+.reading-runway .runway-plane svg { width: 18px; height: 18px; display: block; filter: drop-shadow(0 0 2px rgba(255, 255, 255, .95)); }
+.reading-runway.landed .runway-track { background: repeating-linear-gradient(90deg, var(--accent) 0 10px, transparent 10px 26px); }
+.reading-runway.landed .runway-plane { animation: plane-touchdown .7s var(--ease); }
+@keyframes plane-touchdown {
+  0% { transform: translateX(-50%) translateY(-8px) rotate(-6deg); }
+  55% { transform: translateX(-50%) translateY(0) rotate(0); }
+  75% { transform: translateX(-50%) translateY(-2px); }
+  100% { transform: translateX(-50%) translateY(0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .reading-runway .runway-plane, .reading-runway .runway-fill { transition: none; }
+  .reading-runway.landed .runway-plane { animation: none; }
+}
 
 /* ---- in-column hero (image with overlaid title + lead) ---- */
 body.docshell .hero-doc { margin: 0 0 30px; }
