@@ -133,6 +133,9 @@ body.docshell .doc-body .pager a.btn:hover { border-color: var(--primary); color
 body.docshell .doc-body .pager a.btn-ghost::after,
 body.docshell .doc-body .pager a.btn-primary::after { content: none; }
 
+/* the footer's purple subscribe band is not part of the wireframe doc footer */
+body.docshell .subscribe { display: none; }
+
 /* ---- "Have your say" promo band — light, matching the wireframe ---- */
 body.docshell .band { background: var(--mist); color: var(--text); }
 body.docshell .band .wrap { padding: 64px 24px; }
