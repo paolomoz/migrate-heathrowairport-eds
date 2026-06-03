@@ -78,6 +78,20 @@ have-your-say band correct, 0 console errors).
   Spot-checked the newly-handled block types (phases, cards, keyMap, highlights, docGrid,
   timeline) visually — all render faithfully.
 
+## Search (header magnifier)
+- Client-side full-text search over the consultation document, opened from the header
+  magnifier on `/v2/` pages (doc pages + home). No backend.
+- **Index:** `tools/eds-search-index-v2.mjs` builds `blocks/header/search-index.json`
+  (61 entries, ~258 KB) — one per page with `{path,title,label,n,sub,text}`, where `text`
+  recursively collects every string in the page's content object (full body copy, verbatim).
+  Served from the code bus; fetched once on first open.
+- **UI:** `blocks/header/search.js` — overlay with ranked results (title-match > label > body
+  occurrences; AND-match with OR fallback), highlighted snippets, keyboard nav (↑/↓ + Enter),
+  Esc/backdrop/× close. `header.js` wires the button when `location.pathname` starts `/v2/`.
+  CSS: unscoped `.doc-search` in v2.css (overlay only created on /v2/ pages → inert on POC).
+- Validated headless: open+focus, ranked results with `<mark>` highlights, click-nav,
+  arrow+Enter nav, works on doc pages and the home, 0 console errors.
+
 ## Earlier review fixes (post-examples)
 - **doc-nav row span:** `grid-row: 1 / -1` resolved to span-1 (no explicit row tracks), so
   row 1 inflated to the rail height and pushed content down. Fixed to `1 / span 99`.
