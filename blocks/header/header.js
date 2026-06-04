@@ -12,21 +12,27 @@ const SEARCH = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strok
 
 export default async function decorate(block) {
   block.textContent = '';
-  // On the v2 consultation document (body.docshell) the whole document sits under the
-  // "Our proposal" site section, so mark that nav item current. POC pages are unaffected.
-  const onDoc = document.body.classList.contains('docshell');
+  // On v2 the whole site is the consultation ("Our proposal"): point that nav item at the
+  // v2 home and mark it current. POC pages are unaffected.
+  const onV2 = window.location.pathname.startsWith('/v2/');
+  const logoHref = onV2 ? '/v2/' : '/';
+  const navLink = ([l, h]) => {
+    const href = onV2 && l === 'Our proposal' ? '/v2/' : h;
+    const current = onV2 && l === 'Our proposal' ? ' aria-current="page"' : '';
+    return `<a href="${href}"${current}>${l}</a>`;
+  };
   const header = document.createElement('div');
   header.className = 'site-header';
   header.innerHTML = `<div class="wrap-wide base-header">
-    <a class="logo-link" href="/"><img class="white-logo" src="/icons/logo.png" alt="Heathrow Expansion" height="48"><img class="dark-logo" src="/icons/dark-logo.png" alt="Heathrow Expansion" height="48"></a>
+    <a class="logo-link" href="${logoHref}"><img class="white-logo" src="/icons/logo.png" alt="Heathrow Expansion" height="48"><img class="dark-logo" src="/icons/dark-logo.png" alt="Heathrow Expansion" height="48"></a>
     <button class="nav-toggle" aria-label="Menu">Menu</button>
-    <nav class="site-nav" id="nav">${NAV.map(([l, h]) => `<a href="${h}"${onDoc && l === 'Our proposal' ? ' aria-current="page"' : ''}>${l}</a>`).join('')}<button class="header-search" aria-label="Search">${SEARCH}</button></nav>
+    <nav class="site-nav" id="nav">${NAV.map(navLink).join('')}<button class="header-search" aria-label="Search">${SEARCH}</button></nav>
   </div>`;
   header.querySelector('.nav-toggle').addEventListener('click', () => {
     header.querySelector('#nav').classList.toggle('open');
   });
   // wire the search button to the consultation-document search on v2 pages
-  if (window.location.pathname.startsWith('/v2/')) {
+  if (onV2) {
     header.querySelector('.header-search').addEventListener('click', async () => {
       const { default: openSearch } = await import('./search.js');
       openSearch();
